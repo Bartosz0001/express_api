@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "npx nodemon server.js"
+    "start": "npx nodemon server.js",
+    "build": "cd client && npm install && npm run-script build"
   },
   "author": "",
   "license": "ISC",
