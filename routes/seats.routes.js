@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./../db');
+const socket = require('socket.io');
 
 router.route('/seats').get((req, res) => {
     res.json(db.seats);
@@ -21,6 +22,8 @@ router.route('/seats').get((req, res) => {
         const id = Math.floor(Math.random() * 10000);
         db.seats.push({id: id, day: day, seat: seat, client: client, email: email});
         res.json({message: 'OK'});
+        req.io.set('transports', [ 'websocket' ]);
+        req.io.emit('seatsUpdated', db.seats);
       }
     }
 });

@@ -3,16 +3,26 @@ import { Button, Progress, Alert } from 'reactstrap';
 
 import './SeatChooser.scss';
 
+import io from 'socket.io-client';
+
 class SeatChooser extends React.Component {
   
   componentDidMount() {
     const { loadSeats } = this.props;
     loadSeats();
-    this.interval = setInterval(loadSeats(), 120);
-  }
+    const connectionOptions =  {
+      "force new connection" : true,
+      "reconnectionAttempts": "Infinity", //avoid having user reconnect manually in order to prevent dead clients after a server restart
+      "timeout" : 10000, //before connect_error and connect_timeout are emitted.
+      "transports" : ["websocket"]
+    };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
+    this.socket = io("http://localhost:8000", connectionOptions);
+
+    this.socket.on('seatsUpdated', (seats) => {
+      const { loadSeatsData } = this.props;
+      loadSeatsData(seats);
+    });
   }
 
   isTaken = (seatId) => {
@@ -30,6 +40,12 @@ class SeatChooser extends React.Component {
     else return <Button key={seatId} color="primary" className="seats__seat" outline onClick={(e) => updateSeat(e, seatId)}>{seatId}</Button>;
   }
 
+  freeSeats() {
+    const { seats, chosenDay } = this.props;
+
+    return (50 - seats.filter(item => item.day === chosenDay).length);
+  }
+
   render() {
 
     const { prepareSeat } = this;
@@ -43,6 +59,7 @@ class SeatChooser extends React.Component {
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i+1) )}</div>}
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].pending) && <Progress animated color="primary" value={50} /> }
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].error) && <Alert color="warning">Couldn't load seats...</Alert> }
+        <p>Free seats: {this.freeSeats()}/50</p>
       </div>
     )
   };
