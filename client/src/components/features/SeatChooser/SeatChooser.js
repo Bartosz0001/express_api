@@ -17,7 +17,7 @@ class SeatChooser extends React.Component {
       "transports" : ["websocket"]
     };
 
-    this.socket = io((process.env === 'production' ? '' : 'http://localhost:8000'), connectionOptions);
+    this.socket = io((process.env.NODE.ENV === 'production' ? '' : 'http://localhost:8000'), connectionOptions);
 
     this.socket.on('seatsUpdated', (seats) => {
       const { loadSeatsData } = this.props;
