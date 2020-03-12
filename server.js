@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db.js');
 const testimonials = require('./routes/testimonials.routes.js');
 const concerts = require('./routes/concerts.routes.js');
 const seats = require('./routes/seats.routes.js');
 const path = require('path');
 const socket = require('socket.io');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
@@ -13,6 +13,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
+
+mongoose.connect('mongodb://localhost:27017/NewWaveDB', { useNewUrlParser: true });
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Connected to the database');
+});
+db.on('error', err => console.log('Error ' + err));
 
 const server = app.listen(process.env.PORT || 8000, () => {
   console.log('Server is running on port: 8000');
