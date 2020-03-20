@@ -45,9 +45,10 @@ exports.getAll = async (req, res) => {
         else {
           const newSeat = new Seat({ day: day, seat: seat, client: client, email: email });
           await newSeat.save();
+          const results = await Seat.find();
+          req.io.set('transports', [ 'websocket' ]);
+          req.io.emit('seatsUpdated');
           res.json({ message: 'OK' });
-          //req.io.set('transports', [ 'websocket' ]);
-          //req.io.emit('seatsUpdated', db.seats);
         }
       }
   
