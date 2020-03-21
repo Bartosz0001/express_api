@@ -20,7 +20,7 @@ let s3 = new aws.S3({
   secretAccessKey: process.env.S3_SECRET
 });
 
-mongoose.connect('mongodb+srv://' + accessKeyId + ':' + secretAccessKey +'@cluster0-tia6e.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
+mongoose.connect('mongodb+srv://' + s3.accessKeyId + ':' + s3.secretAccessKey +'@cluster0-tia6e.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
