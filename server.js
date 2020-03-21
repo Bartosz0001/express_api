@@ -6,6 +6,7 @@ const seats = require('./routes/seats.routes.js');
 const path = require('path');
 const socket = require('socket.io');
 const mongoose = require('mongoose');
+const aws = require('aws-sdk');
 
 const app = express();
 app.use(cors());
@@ -14,7 +15,12 @@ app.use(express.json());
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
 
-mongoose.connect('mongodb://localhost:27017/NewWaveDB', { useNewUrlParser: true });
+let s3 = new aws.S3({
+  accessKeyId: process.env.S3_KEY,
+  secretAccessKey: process.env.S3_SECRET
+});
+
+mongoose.connect('mongodb+srv://' + accessKeyId + ':' + secretAccessKey +'@cluster0-tia6e.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
