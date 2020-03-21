@@ -7,9 +7,11 @@ const path = require('path');
 const socket = require('socket.io');
 const mongoose = require('mongoose');
 const aws = require('aws-sdk');
+const helmet = require('helmet');
 
 const app = express();
 app.use(cors());
+app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 // Serve static files from the React app
@@ -20,7 +22,7 @@ let s3 = new aws.S3({
   secretAccessKey: process.env.S3_SECRET
 });
 
-mongoose.connect('mongodb+srv://' + s3.accessKeyId + ':' + s3.secretAccessKey +'@cluster0-tia6e.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
+mongoose.connect(`mongodb+srv://${s3.accessKeyId}:${s3.secretAccessKey}@cluster0-tia6e.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
